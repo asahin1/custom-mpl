@@ -10,14 +10,27 @@
 
 namespace search::datastructures {
 template <class Node, class Key = double> class BinaryHeapPQ {
-  using Item = std::pair<Key, Node>;
-  std::priority_queue<Item, std::vector<Item>, std::greater<Item>> q_;
+  struct Item {
+    Key key;
+    std::size_t seq;
+    Node node;
+  };
+  struct Cmp {
+    bool operator()(const Item &a, const Item &b) const {
+      if (a.key != b.key)
+        return a.key > b.key;
+      return a.seq > b.seq;
+    }
+  };
+  std::priority_queue<Item, std::vector<Item>, Cmp> q_;
+  std::size_t next_seq_ = 0;
 
 public:
   static constexpr bool supports_decrease_key = false;
-  void push(const Node &n, const Key &k) { q_.emplace(k, n); }
+
+  void push(const Node &n, const Key &k) { q_.push(Item{k, next_seq_++, n}); }
   Node pop_min() {
-    auto n = q_.top().second;
+    auto n = q_.top().node;
     q_.pop();
     return n;
   }
