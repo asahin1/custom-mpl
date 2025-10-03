@@ -1,9 +1,9 @@
 #include <catch2/catch_all.hpp>
 
-#include "search/algorithms/astar.hpp"
-#include "search/core/heuristic.hpp"
-#include "search/datastructures/pq_binary_heap.hpp"
-#include "search/graphs/adjacency_list_graph.hpp"
+#include "custom_mpl/search/algorithms/astar.hpp"
+#include "custom_mpl/search/core/heuristic.hpp"
+#include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
+#include "custom_mpl/search/graphs/adjacency_list_graph.hpp"
 
 TEST_CASE("A* equals Dijkstra when h=0") {
   using G = search::graphs::AdjacencyListGraph<int>;

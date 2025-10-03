@@ -10,8 +10,8 @@
 
 namespace search::algorithms {
 template <class Gid, class Hid, class PQ>
-auto astar_dense_ids(const Gid &G, int s, int t, const Hid &h, PQ open)
-    -> search::core::SearchResult<int> {
+auto astar_dense_ids(const Gid &G, int s, int t, const Hid &h,
+                     PQ open) -> search::core::SearchResult<int> {
   const int N = G.num_nodes();
   std::vector<double> g(N, std::numeric_limits<double>::infinity());
   std::vector<int> came_from(N, -1);

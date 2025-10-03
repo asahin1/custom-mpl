@@ -1,6 +1,6 @@
 #include <catch2/catch_all.hpp>
 
-#include "search/datastructures/pq_binary_heap.hpp"
+#include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
 
 TEST_CASE("BinaryHeapPQ push/pop ordering") {
   using PQ = search::datastructures::BinaryHeapPQ<int, double>;

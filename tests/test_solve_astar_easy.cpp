@@ -8,9 +8,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "search/algorithms/astar.hpp"
-#include "search/core/solve.hpp"
-#include "search/datastructures/pq_binary_heap.hpp"
+#include "custom_mpl/search/algorithms/astar.hpp"
+#include "custom_mpl/search/core/solve.hpp"
+#include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
 
 using Catch::Approx;
 

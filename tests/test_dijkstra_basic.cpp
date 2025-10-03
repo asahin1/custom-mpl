@@ -1,8 +1,8 @@
 #include <catch2/catch_all.hpp>
 
-#include "search/algorithms/dijkstra.hpp"
-#include "search/datastructures/pq_binary_heap.hpp"
-#include "search/graphs/adjacency_list_graph.hpp"
+#include "custom_mpl/search/algorithms/dijkstra.hpp"
+#include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
+#include "custom_mpl/search/graphs/adjacency_list_graph.hpp"
 
 TEST_CASE("Dijkstra basic path") {
   using G = search::graphs::AdjacencyListGraph<int>;

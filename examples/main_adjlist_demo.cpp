@@ -1,10 +1,9 @@
 #include <iostream>
 
-#include "search/algorithms/astar.hpp"
-#include "search/algorithms/dijkstra.hpp"
-#include "search/core/heuristic.hpp"
-#include "search/datastructures/pq_binary_heap.hpp"
-#include "search/graphs/adjacency_list_graph.hpp"
+#include "custom_mpl/search/algorithms/astar.hpp"
+#include "custom_mpl/search/algorithms/dijkstra.hpp"
+#include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
+#include "custom_mpl/search/graphs/adjacency_list_graph.hpp"
 
 int main() {
   using N = int;

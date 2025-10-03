@@ -4,8 +4,8 @@
 #include <unordered_set>
 #include <vector>
 
-#include "search/core/solve.hpp"
-#include "search/datastructures/pq_binary_heap.hpp"
+#include "custom_mpl/search/core/solve.hpp"
+#include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
 
 struct Cell {
   int x, y;
