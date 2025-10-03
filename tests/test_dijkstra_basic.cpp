@@ -13,7 +13,9 @@ TEST_CASE("Dijkstra basic path") {
   g.add_edge(0, 2, 5);
   g.add_edge(2, 3, 1);
 
-  auto res = custom_mpl::search::algorithms::dijkstra<int>(g, 0, 3, PQ{});
+  auto is_goal = [](const int n) { return n == 3; };
+
+  auto res = custom_mpl::search::algorithms::dijkstra<int>(g, 0, is_goal, PQ{});
   REQUIRE(res.found);
   REQUIRE(res.cost == Catch::Approx(3.0));
   REQUIRE(res.path == std::vector<int>({0, 1, 2, 3}));

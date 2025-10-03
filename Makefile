@@ -14,5 +14,8 @@ tests:
 	cmake --build build -j$(nproc)
 	ctest --test-dir build
 
+uninstall:
+	rm -rf ${HOME}/.local/include/custom_mpl
+
 clean:
 	rm -rf build

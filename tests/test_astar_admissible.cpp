@@ -13,8 +13,10 @@ TEST_CASE("A* equals Dijkstra when h=0") {
   g.add_edge(1, 2, 2);
   g.add_edge(0, 2, 5);
 
-  auto res = custom_mpl::search::algorithms::astar<int>(
-      g, 0, 2, custom_mpl::search::core::ZeroHeuristic<int>{}, PQ{});
+  auto is_goal = [](const int n) { return n == 2; };
+
+  auto res = custom_mpl::search::algorithms::astar_classic<int>(
+      g, 0, is_goal, custom_mpl::search::core::ZeroHeuristic<int>{}, PQ{});
   REQUIRE(res.found);
   REQUIRE(res.cost == Catch::Approx(4.0));
   REQUIRE(res.path == std::vector<int>({0, 1, 2}));
