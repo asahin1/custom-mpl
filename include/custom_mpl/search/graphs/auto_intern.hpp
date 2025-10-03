@@ -24,6 +24,6 @@ template <class G, class N> struct AutoInterned {
     }
   }
 };
-} // namespace search::graphs
+} // namespace custom_mpl::search::graphs
 
 #endif

@@ -5,7 +5,9 @@
 #include "custom_mpl/search/core/heuristic_lift.hpp"
 #include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
 #include "custom_mpl/search/graphs/auto_intern.hpp"
+
 #include "heuristic_lift.hpp"
+#include "result.hpp"
 
 namespace custom_mpl::search::core {
 template <class N, class G, class H,
@@ -20,7 +22,7 @@ auto solve_astar_easy(const G &g, const std::vector<N> &all_nodes,
   auto res_ids =
       search::algorithms::astar_dense_ids(intern.Gid, s, t, hid, std::move(pq));
 
-  search::core::SearchResult<N> out;
+  custom_mpl::search::core::SearchResult<N> out;
   out.found = res_ids.found;
   out.cost = res_ids.cost;
   out.expanded = res_ids.expanded;
@@ -29,6 +31,6 @@ auto solve_astar_easy(const G &g, const std::vector<N> &all_nodes,
     out.path.push_back(intern.index.from_id(uid));
   return out;
 }
-} // namespace search::core
+} // namespace custom_mpl::search::core
 
 #endif

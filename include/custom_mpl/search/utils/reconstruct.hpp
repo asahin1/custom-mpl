@@ -25,6 +25,6 @@ reconstruct_path(const std::unordered_map<N, N> &came_from, N start, N goal) {
   std::reverse(path.begin(), path.end());
   return path;
 }
-} // namespace search::utils
+} // namespace custom_mpl::search::utils
 
 #endif

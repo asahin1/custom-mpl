@@ -14,6 +14,6 @@ template <class N> struct SearchResult {
   std::size_t expanded = 0;
   std::size_t generated = 0;
 };
-} // namespace search::core
+} // namespace custom_mpl::search::core
 
 #endif

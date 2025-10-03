@@ -3,8 +3,8 @@
 
 namespace custom_mpl::search::core {
 template <class N> struct ZeroHeuristic {
-  double operator()(const N &, const N &) const noexcept { return 0.0; }
+  double operator()(const N &) const noexcept { return 0.0; }
 };
-} // namespace search::core
+} // namespace custom_mpl::search::core
 
 #endif
