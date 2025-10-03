@@ -1,24 +1,57 @@
 cmake_minimum_required(VERSION 3.16)
-project(custom-mpl LANGUAGES CXX)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(custom_mpl VERSION 1.0.0)
 
 # Library target
-add_library(search)
-target_include_directories(search PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
+add_library(custom_mpl INTERFACE)
+target_include_directories(custom_mpl INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(custom_mpl INTERFACE cxx_std_17)
+add_library(custom_mpl::custom_mpl ALIAS custom_mpl)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
 )
-target_sources(search PRIVATE
-  src/search/utils/stats.cpp
+
+install(
+  TARGETS custom_mpl
+  EXPORT custom_mplTargets
 )
 
-# Apps/demos
-add_executable(main_adjlist src/apps/main_adjlist_demo.cpp)
-target_link_libraries(main_adjlist PRIVATE search)
+include(CMakePackageConfigHelpers)
 
-add_executable(main_user_custom_graph src/apps/main_user_custom_graph.cpp)
-target_link_libraries(main_user_custom_graph PRIVATE search)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
 
-enable_testing()
-add_subdirectory(tests)
+install(
+  EXPORT custom_mplTargets
+  NAMESPACE custom_mpl::
+  DESTINATION lib/cmake/custom_mpl
+)
+
+configure_package_config_file(
+  cmake/custom_mplConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfig.cmake"
+  INSTALL_DESTINATION lib/cmake/custom_mpl
+)
+
+install(
+  FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfigVersion.cmake"
+  DESTINATION lib/cmake/custom_mpl
+)
+
+option(CUSTOM_MPL_BUILD_EXAMPLES "Build examples" OFF)
+option(CUSTOM_MPL_BUILD_TESTS "Build tests" OFF)
+if(CUSTOM_MPL_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+if(CUSTOM_MPL_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(tests)
+endif()
