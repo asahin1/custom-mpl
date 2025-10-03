@@ -1,4 +1,4 @@
-.PHONY: install examples tests clean
+.PHONY: install examples tests uninstall clean
 
 install:
 	cmake -S . -B build -DCMAKE_INSTALL_PREFIX=${HOME}/.local -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
