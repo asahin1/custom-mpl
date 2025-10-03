@@ -4,7 +4,7 @@
 #include "custom_mpl/search/utils/indexer.hpp"
 #include "int_adj.hpp"
 
-namespace search::graphs {
+namespace custom_mpl::search::graphs {
 template <class G, class N> struct AutoInterned {
   search::utils::Indexer<N> index;
   IntAdj Gid;

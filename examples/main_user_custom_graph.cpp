@@ -68,9 +68,9 @@ int main(int argc, char **argv) {
     return std::abs(a.x - b.x) + std::abs(a.y - b.y);
   };
 
-  auto res = search::core::solve_astar_easy<Cell>(
+  auto res = custom_mpl::search::core::solve_astar_easy<Cell>(
       g, all, start, goal, manhattan,
-      search::datastructures::BinaryHeapPQ<int, double>{});
+      custom_mpl::search::datastructures::BinaryHeapPQ<int, double>{});
 
   if (!res.found) {
     std::cout << "No path found\n";

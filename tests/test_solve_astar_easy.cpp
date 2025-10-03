@@ -68,9 +68,9 @@ TEST_CASE("solve_astar_easy finds shortest path on a small grid") {
     return std::abs(a.x - b.x) + std::abs(a.y - b.y);
   };
 
-  auto res_easy = search::core::solve_astar_easy<Cell>(
+  auto res_easy = custom_mpl::search::core::solve_astar_easy<Cell>(
       g, all, S, G, manhattan,
-      search::datastructures::BinaryHeapPQ<int, double>{});
+      custom_mpl::search::datastructures::BinaryHeapPQ<int, double>{});
 
   REQUIRE(res_easy.found);
   REQUIRE(res_easy.cost == Approx(5.0));
@@ -78,8 +78,8 @@ TEST_CASE("solve_astar_easy finds shortest path on a small grid") {
   REQUIRE(res_easy.path.front() == S);
   REQUIRE(res_easy.path.back() == G);
 
-  auto res_generic = search::algorithms::astar<Cell>(
-      g, S, G, manhattan, search::datastructures::BinaryHeapPQ<Cell, double>{});
+  auto res_generic = custom_mpl::search::algorithms::astar<Cell>(
+      g, S, G, manhattan, custom_mpl::search::datastructures::BinaryHeapPQ<Cell, double>{});
 
   REQUIRE(res_generic.found);
   REQUIRE(res_generic.cost == Approx(res_easy.cost));
@@ -106,8 +106,8 @@ TEST_CASE("solve_astar_easy handles no-path case") {
     return std::abs(a.x - b.x) + std::abs(a.y - b.y);
   };
 
-  auto res = search::core::solve_astar_easy<Cell>(
-      g, all, S, G, H, search::datastructures::BinaryHeapPQ<int, double>{});
+  auto res = custom_mpl::search::core::solve_astar_easy<Cell>(
+      g, all, S, G, H, custom_mpl::search::datastructures::BinaryHeapPQ<int, double>{});
 
   REQUIRE_FALSE(res.found);
   REQUIRE(res.path.empty());

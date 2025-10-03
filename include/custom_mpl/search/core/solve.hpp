@@ -7,7 +7,7 @@
 #include "custom_mpl/search/graphs/auto_intern.hpp"
 #include "heuristic_lift.hpp"
 
-namespace search::core {
+namespace custom_mpl::search::core {
 template <class N, class G, class H,
           class PQ = search::datastructures::BinaryHeapPQ<int, double>>
 auto solve_astar_easy(const G &g, const std::vector<N> &all_nodes,

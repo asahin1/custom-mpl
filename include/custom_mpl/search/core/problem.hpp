@@ -3,7 +3,7 @@
 
 #include <utility>
 
-namespace search::core {
+namespace custom_mpl::search::core {
 template <class GraphT, class NodeT, class HeuristicT> struct Problem {
   const GraphT *graph;
   NodeT start;

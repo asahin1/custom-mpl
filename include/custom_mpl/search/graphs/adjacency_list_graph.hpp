@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-namespace search::graphs {
+namespace custom_mpl::search::graphs {
 template <class N = int, class W = double> class AdjacencyListGraph {
 public:
   using Edge = std::pair<N, W>;

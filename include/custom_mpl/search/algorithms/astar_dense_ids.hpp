@@ -8,7 +8,7 @@
 
 #include "custom_mpl/search/core/result.hpp"
 
-namespace search::algorithms {
+namespace custom_mpl::search::algorithms {
 template <class Gid, class Hid, class PQ>
 auto astar_dense_ids(const Gid &G, int s, int t, const Hid &h,
                      PQ open) -> search::core::SearchResult<int> {

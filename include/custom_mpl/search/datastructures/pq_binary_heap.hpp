@@ -8,7 +8,7 @@
 #include <utility>
 #include <vector>
 
-namespace search::datastructures {
+namespace custom_mpl::search::datastructures {
 template <class Node, class Key = double> class BinaryHeapPQ {
   struct Item {
     Key key;

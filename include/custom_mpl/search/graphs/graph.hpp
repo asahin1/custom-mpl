@@ -16,6 +16,6 @@ edges.
 - capability flags if needed in the future
 */
 
-namespace search::core {} // namespace search::core
+namespace custom_mpl::search::core {} // namespace search::core
 
 #endif

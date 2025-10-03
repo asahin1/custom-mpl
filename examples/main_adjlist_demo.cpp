@@ -7,8 +7,8 @@
 
 int main() {
   using N = int;
-  using G = search::graphs::AdjacencyListGraph<N, double>;
-  using PQ = search::datastructures::BinaryHeapPQ<N, double>;
+  using G = custom_mpl::search::graphs::AdjacencyListGraph<N, double>;
+  using PQ = custom_mpl::search::datastructures::BinaryHeapPQ<N, double>;
 
   G g(4);
   g.add_edge(0, 1, 1);
@@ -16,15 +16,15 @@ int main() {
   g.add_edge(0, 2, 5);
   g.add_edge(2, 3, 1);
 
-  auto res = search::algorithms::dijkstra<N>(g, 0, 3, PQ{});
+  auto res = custom_mpl::search::algorithms::dijkstra<N>(g, 0, 3, PQ{});
   std::cout << "Dijkstra found=" << res.found << " cost=" << res.cost
             << " path:";
   for (auto n : res.path)
     std::cout << " " << n;
   std::cout << "\n";
 
-  auto res2 = search::algorithms::astar<N>(
-      g, 0, 3, search::core::ZeroHeuristic<N>{}, PQ{});
+  auto res2 = custom_mpl::search::algorithms::astar<N>(
+      g, 0, 3, custom_mpl::search::core::ZeroHeuristic<N>{}, PQ{});
   std::cout << "A* found=" << res2.found << " cost=" << res2.cost << " path:";
   for (auto n : res2.path)
     std::cout << " " << n;

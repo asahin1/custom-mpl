@@ -1,7 +1,7 @@
 #ifndef CUSTOM_MPL_SEARCH_CORE_HEURISTICLIFT_HPP
 #define CUSTOM_MPL_SEARCH_CORE_HEURISTICLIFT_HPP
 
-namespace search::core {
+namespace custom_mpl::search::core {
 template <class N, class H, class Indexer> struct LiftHeuristicToIds {
   const H *h;
   const Indexer *idx;

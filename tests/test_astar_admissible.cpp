@@ -6,15 +6,15 @@
 #include "custom_mpl/search/graphs/adjacency_list_graph.hpp"
 
 TEST_CASE("A* equals Dijkstra when h=0") {
-  using G = search::graphs::AdjacencyListGraph<int>;
-  using PQ = search::datastructures::BinaryHeapPQ<int, double>;
+  using G = custom_mpl::search::graphs::AdjacencyListGraph<int>;
+  using PQ = custom_mpl::search::datastructures::BinaryHeapPQ<int, double>;
   G g(3);
   g.add_edge(0, 1, 2);
   g.add_edge(1, 2, 2);
   g.add_edge(0, 2, 5);
 
-  auto res = search::algorithms::astar<int>(
-      g, 0, 2, search::core::ZeroHeuristic<int>{}, PQ{});
+  auto res = custom_mpl::search::algorithms::astar<int>(
+      g, 0, 2, custom_mpl::search::core::ZeroHeuristic<int>{}, PQ{});
   REQUIRE(res.found);
   REQUIRE(res.cost == Catch::Approx(4.0));
   REQUIRE(res.path == std::vector<int>({0, 1, 2}));

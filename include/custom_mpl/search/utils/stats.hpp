@@ -3,7 +3,7 @@
 
 #include <chrono>
 
-namespace search::utils {
+namespace custom_mpl::search::utils {
 class Timer {
 public:
   void start() { t0_ = clock::now(); }

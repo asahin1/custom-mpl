@@ -3,7 +3,7 @@
 
 #include <limits>
 
-namespace search::core {
+namespace custom_mpl::search::core {
 using Cost = double;
 inline constexpr Cost INF = std::numeric_limits<Cost>::infinity();
 } // namespace search::core

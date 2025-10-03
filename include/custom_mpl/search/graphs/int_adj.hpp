@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-namespace search::graphs {
+namespace custom_mpl::search::graphs {
 struct IntAdj {
   std::vector<std::vector<std::pair<int, double>>> adj;
   explicit IntAdj(int n = 0) : adj(n) {}

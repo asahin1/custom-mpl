@@ -8,7 +8,7 @@
 #include "custom_mpl/search/core/result.hpp"
 #include "custom_mpl/search/core/types.hpp"
 
-namespace search::algorithms {
+namespace custom_mpl::search::algorithms {
 template <class N, class G, class H, class PQ, class Key = double>
 core::SearchResult<N> astar(const G &graph, const N &start, const N &goal,
                             const H &h, PQ open);

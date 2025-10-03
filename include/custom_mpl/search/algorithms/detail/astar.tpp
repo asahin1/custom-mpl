@@ -6,7 +6,7 @@
 
 #include "custom_mpl/search/utils/reconstruct.hpp"
 
-namespace search::algorithms {
+namespace custom_mpl::search::algorithms {
 template <class N, class G, class H, class PQ, class Key>
 core::SearchResult<N> astar(const G &graph, const N &start, const N &goal,
                             const H &h, PQ open) {
@@ -56,6 +56,6 @@ core::SearchResult<N> astar(const G &graph, const N &start, const N &goal,
   }
   return res; // not found
 }
-} // namespace search::algorithms
+} // namespace custom_mpl::search::algorithms
 
 #endif

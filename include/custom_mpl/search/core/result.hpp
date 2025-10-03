@@ -6,7 +6,7 @@
 
 #include "types.hpp"
 
-namespace search::core {
+namespace custom_mpl::search::core {
 template <class N> struct SearchResult {
   std::vector<N> path;
   Cost cost = INF;

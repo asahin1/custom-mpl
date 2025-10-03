@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace search::utils {
+namespace custom_mpl::search::utils {
 template <class N> class Indexer {
 public:
   int id(const N &n) {
