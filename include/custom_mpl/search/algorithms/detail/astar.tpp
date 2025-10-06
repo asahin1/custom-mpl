@@ -54,10 +54,11 @@ astar(const G &graph, const N &start, const IsGoalFunc &is_goal, const H &h,
         continue;
       }
 
-      if (cand < old_g) { // TODO: investigate different options here
+      if (cand < old_g) {
         g[v] = cand;
         came_from[v] = u;
         open.push(v, f(v, cand));
+        closed.remove(v);
         ++res.generated;
       }
     }

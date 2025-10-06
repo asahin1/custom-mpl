@@ -20,12 +20,13 @@ astar(const G &graph, const N &start, const IsGoalFunc &is_goal, const H &h,
 namespace custom_mpl::search::algorithms {
 template <class N, class G, class IsGoalFunc, class H, class PQ,
           class Key = double>
-auto astar_classic(const G &g, const N &s, const IsGoalFunc &is_goal,
-                   const H &h, PQ open) {
+auto astar_classic(
+    const G &g, const N &s, const IsGoalFunc &is_goal, const H &h,
+    PQ open) { // astar implementation based on Hart et al. (1968)
   return astar<N, G, IsGoalFunc, H, PQ>(
       g, s, is_goal, h, open,
       custom_mpl::search::policies::ClosedSetHash<N>{}, // with closed list
-      custom_mpl::search::policies::ReopenForbid{}      // no reopening
+      custom_mpl::search::policies::ReopenIfBetter{}    // and reopening
   );
 }
 } // namespace custom_mpl::search::algorithms
