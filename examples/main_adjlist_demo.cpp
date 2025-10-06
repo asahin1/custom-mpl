@@ -5,18 +5,46 @@
 #include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
 #include "custom_mpl/search/graphs/adjacency_list_graph.hpp"
 
+double heuristic(int n) {
+  switch (n) {
+  case 0:
+    return 0;
+  case 1:
+    return 0;
+  case 2:
+    return 0;
+  case 3:
+    return 2;
+  case 4:
+    return 0;
+  case 5:
+    return 0;
+  default:
+    return 0;
+  }
+}
+
 int main() {
   using N = int;
   using G = custom_mpl::search::graphs::AdjacencyListGraph<N, double>;
   using PQ = custom_mpl::search::datastructures::BinaryHeapPQ<N, double>;
 
-  G g(4);
+  // G g(4);
+  // g.add_edge(0, 1, 1);
+  // g.add_edge(1, 2, 1);
+  // g.add_edge(0, 2, 5);
+  // g.add_edge(2, 3, 1);
+
+  G g(6);
   g.add_edge(0, 1, 1);
   g.add_edge(1, 2, 1);
-  g.add_edge(0, 2, 5);
-  g.add_edge(2, 3, 1);
+  g.add_edge(1, 3, 2);
+  g.add_edge(2, 4, 2.5);
+  g.add_edge(3, 4, 0.5);
+  g.add_edge(3, 5, 2);
+  g.add_edge(4, 5, 1);
 
-  auto is_goal = [](const N &n) { return n == 3; };
+  auto is_goal = [](const N &n) { return n == 5; };
 
   auto res = custom_mpl::search::algorithms::dijkstra<N>(g, 0, is_goal, PQ{});
   std::cout << "Dijkstra found=" << res.found << " cost=" << res.cost
@@ -25,10 +53,21 @@ int main() {
     std::cout << " " << n;
   std::cout << "\n";
 
-  auto res2 = custom_mpl::search::algorithms::astar_classic<N>(
-      g, 0, is_goal, custom_mpl::search::core::ZeroHeuristic<N>{}, PQ{});
+  auto res2 = custom_mpl::search::algorithms::astar_classic<N>(g, 0, is_goal,
+                                                               heuristic, PQ{});
   std::cout << "A* found=" << res2.found << " cost=" << res2.cost << " path:";
   for (auto n : res2.path)
+    std::cout << " " << n;
+  std::cout << "\n";
+
+  // A* with closed set and without node reopening: Has to result in suboptimal
+  // path if the heuristic is inconsistent.
+  auto res3 = custom_mpl::search::algorithms::astar<N>(
+      g, 0, is_goal, heuristic, PQ{},
+      custom_mpl::search::policies::ClosedSetHash<N>{},
+      custom_mpl::search::policies::ReopenForbid{});
+  std::cout << "A* found=" << res3.found << " cost=" << res3.cost << " path:";
+  for (auto n : res3.path)
     std::cout << " " << n;
   std::cout << "\n";
 }
