@@ -20,8 +20,10 @@ astar(const G &graph, const N &start, const IsGoalFunc &is_goal, const H &h,
   std::unordered_map<N, custom_mpl::search::core::Cost> g;
   std::unordered_map<N, N> came_from;
 
+  size_t seq{0};
+
   g[start] = 0.0;
-  open.push(start, f(start, 0.0));
+  open.push(start, f(start, 0.0), g[start], seq++);
 
   custom_mpl::search::core::SearchResult<N> res;
 
@@ -57,7 +59,7 @@ astar(const G &graph, const N &start, const IsGoalFunc &is_goal, const H &h,
       if (cand < old_g) {
         g[v] = cand;
         came_from[v] = u;
-        open.push(v, f(v, cand));
+        open.push(v, f(v, cand), cand, seq++);
         closed.remove(v);
         ++res.generated;
       }
