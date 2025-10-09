@@ -5,8 +5,6 @@
 #include "custom_mpl/search/algorithms/astar.hpp"
 #include "custom_mpl/search/algorithms/dijkstra.hpp"
 #include "custom_mpl/search/core/types.hpp"
-#include "custom_mpl/search/datastructures/heap.hpp"
-#include "custom_mpl/search/datastructures/pq_binary_heap.hpp"
 #include "custom_mpl/search/datastructures/priority_queue.hpp"
 #include "custom_mpl/search/graphs/adjacency_list_graph.hpp"
 #include "custom_mpl/search/policies/tie_break.hpp"
@@ -34,18 +32,9 @@ int main() {
   using N = int;
   using QItem = custom_mpl::search::core::QItem<N>;
   using G = custom_mpl::search::graphs::AdjacencyListGraph<N, double>;
-  // using PQ = custom_mpl::search::datastructures::BinaryHeapPQ<N, double>;
-  using Heap = custom_mpl::search::datastructures::Heap<
-      QItem, custom_mpl::search::policies::TieFGThenSeq>;
   using StdPQ = std::priority_queue<QItem, std::vector<QItem>,
                                     custom_mpl::search::policies::TieFGThenSeq>;
   using PQ = custom_mpl::search::datastructures::PriorityQueue<N, StdPQ>;
-
-  // G g(4);
-  // g.add_edge(0, 1, 1);
-  // g.add_edge(1, 2, 1);
-  // g.add_edge(0, 2, 5);
-  // g.add_edge(2, 3, 1);
 
   G g(6);
   g.add_edge(0, 1, 1);
