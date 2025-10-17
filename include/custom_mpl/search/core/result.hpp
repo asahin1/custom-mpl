@@ -7,8 +7,8 @@
 #include "types.hpp"
 
 namespace custom_mpl::search::core {
-template <class N> struct SearchResult {
-  std::vector<N> path;
+template <class Node> struct SearchResult {
+  std::vector<Node> path;
   Cost cost = INF;
   bool found = false;
   std::size_t expanded = 0;
