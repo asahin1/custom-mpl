@@ -1,28 +1,25 @@
 #ifndef CUSTOMMPL_SEARCH_POLICIES_CLOSEDSET_HPP
 #define CUSTOMMPL_SEARCH_POLICIES_CLOSEDSET_HPP
 
+#include <cassert>
+#include <cstddef>
+#include <functional>
+#include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 namespace custom_mpl::search::policies {
-template <class N> struct ClosedSetNone {
-  void clear() {}
-  bool contains(const N &) const { return false; }
-  void insert(const N &) {}
-  void remove(const N &) {}
+struct ClosedNone {
+  bool is_closed(const bool &flag) const { return false; }
+  void mark_closed(bool &flag) const {}
+  void reopen(bool &flag) const {}
+  static constexpr bool gates_enqueue = false;
 };
-
-template <class N, class Hash = std::hash<N>, class Eq = std::equal_to<N>>
-struct ClosedSetHash {
-  std::unordered_set<N, Hash, Eq> S;
-  void clear() { S.clear(); }
-  bool contains(const N &n) const { return S.find(n) != S.end(); }
-  void insert(const N &n) { S.insert(n); }
-  void remove(const N &n) {
-    auto it = S.find(n);
-    if (it != S.end()) {
-      S.erase(it);
-    }
-  }
+struct ClosedFlag {
+  static constexpr bool gates_enqueue = true;
+  bool is_closed(const bool &flag) const { return flag; }
+  void mark_closed(bool &flag) const { flag = true; }
+  void reopen(bool &flag) const { flag = false; }
 };
 } // namespace custom_mpl::search::policies
 
