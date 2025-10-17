@@ -8,6 +8,8 @@
 #include "custom_mpl/search/algorithms/astar.hpp"
 #include "custom_mpl/search/core/heuristic.hpp"
 #include "custom_mpl/search/datastructures/datastructures.hpp"
+#include "custom_mpl/search/datastructures/open_list.hpp"
+#include "custom_mpl/search/policies/closed_set.hpp"
 #include "custom_mpl/search/policies/policies.hpp"
 
 struct Coords {
@@ -82,26 +84,26 @@ struct LargeGraph {
 
 int main() {
   using N = Coords;
-  using QItem = custom_mpl::search::core::QItem<N>;
   using G = LargeGraph;
-  using Heap = custom_mpl::search::datastructures::Heap<
-      QItem, custom_mpl::search::policies::TieFGThenSeq>;
-  using StdPQ = std::priority_queue<QItem, std::vector<QItem>,
-                                    custom_mpl::search::policies::TieFGThenSeq>;
-  using PQ = custom_mpl::search::datastructures::PriorityQueue<N, Heap>;
 
   G graph;
   graph.obstacles.push_back({10, 10, 20, 20});
+  graph.obstacles.push_back({60, 50, 80, 80});
 
-  auto is_goal = [](const N &n) { return n.x == 99 && n.y == 99; };
+  Coords goal{99, 99};
+
+  auto is_goal = [&](const N &n) { return n == goal; };
+  auto euclidean_heuristic = [&](const N &n) {
+    return sqrt((goal.x - n.x) * (goal.x - n.x) +
+                (goal.y - n.y) * (goal.y - n.y));
+  };
 
   std::chrono::_V2::steady_clock::time_point start_time;
   std::chrono::_V2::steady_clock::time_point end_time;
   start_time = std::chrono::steady_clock::now();
-  auto res = custom_mpl::search::algorithms::astar(
-      graph, Coords{1, 1}, is_goal,
-      custom_mpl::search::core::ZeroHeuristic<N>{}, PQ{},
-      custom_mpl::search::policies::ClosedSetNone<N>{},
+  auto [res, _] = custom_mpl::search::algorithms::astar(
+      graph, Coords{1, 1}, is_goal, euclidean_heuristic,
+      custom_mpl::search::policies::ClosedNone{},
       custom_mpl::search::policies::ReopenForbid{});
   end_time = std::chrono::steady_clock::now();
   std::chrono::duration<double> diff_seconds = end_time - start_time;
@@ -109,6 +111,32 @@ int main() {
   std::cout << "A* found=" << res.found << " in " << runtime << " seconds. "
             << " Cost=" << res.cost << " path:";
   for (auto n : res.path)
+    std::cout << " " << "(" << n.x << "," << n.y << ")";
+  std::cout << "\n";
+
+  start_time = std::chrono::steady_clock::now();
+  auto res2 = custom_mpl::search::algorithms::astar_classic(
+      graph, Coords{1, 1}, is_goal, euclidean_heuristic);
+  end_time = std::chrono::steady_clock::now();
+  diff_seconds = end_time - start_time;
+  runtime = diff_seconds.count();
+  std::cout << "A* (classic) found=" << res2.found << " in " << runtime
+            << " seconds. "
+            << " Cost=" << res2.cost << " path:";
+  for (auto n : res2.path)
+    std::cout << " " << "(" << n.x << "," << n.y << ")";
+  std::cout << "\n";
+
+  start_time = std::chrono::steady_clock::now();
+  auto res3 = custom_mpl::search::algorithms::weighted_astar(
+      graph, Coords{1, 1}, is_goal, euclidean_heuristic, 2);
+  end_time = std::chrono::steady_clock::now();
+  diff_seconds = end_time - start_time;
+  runtime = diff_seconds.count();
+  std::cout << "Weighted A* found=" << res3.found << " in " << runtime
+            << " seconds. "
+            << " Cost=" << res3.cost << " path:";
+  for (auto n : res3.path)
     std::cout << " " << "(" << n.x << "," << n.y << ")";
   std::cout << "\n";
 }
