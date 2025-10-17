@@ -1,66 +1,114 @@
 #ifndef CUSTOM_MPL_SEARCH_ALGORITHMS_DETAIL_ASTAR_TPP
 #define CUSTOM_MPL_SEARCH_ALGORITHMS_DETAIL_ASTAR_TPP
 
+#include <cstddef>
+#include <deque>
+#include <limits>
 #include <unordered_map>
 
 #include "custom_mpl/search/core/result.hpp"
+#include "custom_mpl/search/core/types.hpp"
+#include "custom_mpl/search/datastructures/open_list.hpp"
+#include "custom_mpl/search/utils/hash_utils.hpp"
 #include "custom_mpl/search/utils/reconstruct.hpp"
 
 namespace custom_mpl::search::algorithms {
-template <class N, class G, class IsGoalFunc, class H, class PQ,
-          class ClosedSetPolicy, class ReopenPolicy, class Key>
-custom_mpl::search::core::SearchResult<N>
-astar(const G &graph, const N &start, const IsGoalFunc &is_goal, const H &h,
-      PQ open, ClosedSetPolicy closed, ReopenPolicy reopen) {
 
-  auto f = [&](const N &n, custom_mpl::search::core::Cost gval) {
-    return static_cast<Key>(gval + h(n));
+template <class Node> struct NodeStore {
+  using NodeHash = utils::DerefHash<Node>;
+  using NodeEq = utils::DerefEq<Node>;
+
+  static constexpr size_t kNoParent = std::numeric_limits<size_t>::max();
+
+  struct NodeInfo {
+    const Node node;
+    core::Cost g;
+    size_t parent;
+    bool closed;
   };
 
-  std::unordered_map<N, custom_mpl::search::core::Cost> g;
-  std::unordered_map<N, N> came_from;
+  std::deque<NodeInfo> nodes;
+
+  std::unordered_map<const Node *, size_t, NodeHash, NodeEq> node_to_id;
+
+  size_t get_or_create(const Node &n) {
+    Node probe = n;
+    const Node *p = &probe;
+    auto it = node_to_id.find(p);
+    if (it != node_to_id.end()) {
+      return it->second;
+    }
+    NodeInfo &stored =
+        nodes.emplace_back(NodeInfo{n, core::INF, kNoParent, false});
+    const Node *id = &stored.node;
+    size_t index = nodes.size() - 1;
+    node_to_id.emplace(id, index);
+    return index;
+  }
+};
+
+template <class Node, class Graph, class IsGoalFunc, class Heuristic,
+          class OrderingPolicy, class ClosedSetPolicy, class ReopenPolicy>
+custom_mpl::search::core::SearchResult<Node> generalized_astar(
+    const Graph &graph, const Node &start, const IsGoalFunc &is_goal,
+    const Heuristic &h,
+    custom_mpl::search::datastructures::OpenList<OrderingPolicy> &open,
+    ClosedSetPolicy closed, ReopenPolicy reopen) {
+
+  using NodeStore_t = NodeStore<Node>;
+  using NodeInfo = typename NodeStore_t::NodeInfo;
+  using NodeContainer_t = std::deque<NodeInfo>;
+
+  NodeStore_t node_store;
+
+  auto start_index = node_store.get_or_create(start);
+  core::Cost g_start = 0.0;
+  node_store.nodes[start_index].g = g_start;
 
   size_t seq{0};
+  open.push(start_index, g_start, h(start), seq++);
 
-  g[start] = 0.0;
-  open.push(start, f(start, 0.0), g[start], seq++);
-
-  custom_mpl::search::core::SearchResult<N> res;
+  custom_mpl::search::core::SearchResult<Node> res;
 
   while (!open.empty()) {
-    N u = open.pop_min();
-    if (closed.contains(u))
+    auto it = open.pop_min();
+    NodeInfo &u_info = node_store.nodes[it.id];
+    if (it.g_at_push != u_info.g) // popped node is stale
       continue;
-    closed.insert(u);
+    if (closed.is_closed(u_info.closed)) // popped node is in closed
+      continue;
+    closed.mark_closed(u_info.closed);
     ++res.expanded;
 
-    if (is_goal(u)) {
+    if (is_goal(u_info.node)) {
       res.found = true;
-      res.cost = g[u];
+      res.cost = u_info.g;
       res.path =
-          custom_mpl::search::utils::reconstruct_path<N>(came_from, start, u);
+          custom_mpl::search::utils::reconstruct_path<NodeContainer_t, Node>(
+              node_store.nodes, it.id, NodeStore_t::kNoParent);
       return res;
     }
 
-    for (auto &&e : graph.neighbors(u)) {
-      const N &v = e.first;
+    for (auto &&e : graph.neighbors(u_info.node)) {
+      const Node &v = e.first;
       custom_mpl::search::core::Cost w =
           static_cast<custom_mpl::search::core::Cost>(e.second);
       if (w < 0) // should not have negative cost edge
         continue;
-      custom_mpl::search::core::Cost cand = g[u] + w;
-      auto it_gv = g.find(v);
-      custom_mpl::search::core::Cost old_g =
-          (it_gv == g.end()) ? custom_mpl::search::core::INF : it_gv->second;
-      if (closed.contains(v) && !reopen.should_reopen(old_g, cand)) {
+      custom_mpl::search::core::Cost cand = u_info.g + w;
+      auto v_idx = node_store.get_or_create(v);
+      NodeInfo &v_info = node_store.nodes[v_idx];
+      custom_mpl::search::core::Cost old_g = v_info.g;
+      if (closed.is_closed(v_info.closed) &&
+          !reopen.should_reopen(old_g, cand)) {
         continue;
       }
 
       if (cand < old_g) {
-        g[v] = cand;
-        came_from[v] = u;
-        open.push(v, f(v, cand), cand, seq++);
-        closed.remove(v);
+        v_info.g = cand;
+        v_info.parent = it.id;
+        open.push(v_idx, cand, h(v_info.node), seq);
+        closed.reopen(v_info.closed);
         ++res.generated;
       }
     }
