@@ -57,6 +57,30 @@ struct WeightedAStarLowerHFirst {
   };
 };
 
+struct FocalHeuristicDeeperFirst {
+  using CostType = custom_mpl::search::core::Cost;
+
+  struct Key {
+    CostType h_f;
+    CostType g; // prefer deeper on ties
+    size_t ins; // insertion order if same depth
+  };
+
+  static Key make_key(CostType g, CostType h_f, size_t ins) noexcept {
+    return {h_f, g, ins};
+  }
+
+  struct GreaterThan {
+    bool operator()(const Key &a, const Key &b) const noexcept {
+      if (a.h_f != b.h_f)
+        return a.h_f > b.h_f;
+      if (a.g != b.g)
+        return a.g < b.g;
+      return a.ins > b.ins;
+    }
+  };
+};
+
 } // namespace custom_mpl::search::policies
 
 #endif
