@@ -6,6 +6,7 @@
 
 #include "custom_mpl/search/core/types.hpp"
 #include "custom_mpl/search/datastructures/heap.hpp"
+#include "custom_mpl/search/datastructures/intrusive_heap.hpp"
 
 namespace custom_mpl::search::datastructures {
 struct StdPriorityQueueMaker {
@@ -16,6 +17,12 @@ struct StdPriorityQueueMaker {
 struct HeapMaker {
   template <class Value, class Compare>
   using type = custom_mpl::search::datastructures::Heap<Value, Compare>;
+};
+
+struct IntrusiveHeapMaker {
+  template <class Value, class Compare>
+  using type =
+      custom_mpl::search::datastructures::IntrusiveHeap<Value, Compare>;
 };
 } // namespace custom_mpl::search::datastructures
 

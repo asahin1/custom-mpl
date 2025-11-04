@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "custom_mpl/search/datastructures/intrusive_heap.hpp"
 #include "custom_mpl/search/datastructures/pq_maker.hpp"
 
 namespace custom_mpl::search::datastructures {
@@ -16,7 +17,10 @@ public:
   using CostType = typename OrderingPolicy::CostType;
   using InsertionType = std::uint32_t;
 
-  struct Item {
+  class Item : public HeapElement {
+  public:
+    Item(size_t id, typename OrderingPolicy::Key key, CostType g_at_push)
+        : id{id}, key{key}, g_at_push{g_at_push} {}
     size_t id;
     typename OrderingPolicy::Key key;
     CostType g_at_push;
@@ -26,9 +30,11 @@ public:
   explicit OpenList(OrderingPolicy policy) noexcept
       : order_(std::move(policy)) {}
 
-  void push(size_t &id, CostType g, CostType h, InsertionType ins) {
+  const Item &top() const { return pq_.top(); }
+
+  void push(const size_t &id, CostType g, CostType h, InsertionType ins) {
     auto key = order_.make_key(g, h, ins);
-    pq_.emplace(Item{id, key, g});
+    pq_.push(Item(id, key, g));
   }
   const Item pop_min() {
     auto res = top();
@@ -38,8 +44,13 @@ public:
 
   bool empty() const { return pq_.empty(); }
 
+  typename std::vector<Item>::const_iterator begin() const {
+    return pq_.begin();
+  }
+
+  typename std::vector<Item>::const_iterator end() const { return pq_.end(); }
+
 private:
-  const Item &top() const { return pq_.top(); }
   void pop() noexcept { pq_.pop(); }
 
   struct Cmp {
