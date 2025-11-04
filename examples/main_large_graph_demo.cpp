@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "custom_mpl/search/algorithms/astar.hpp"
+#include "custom_mpl/search/algorithms/focal_search.hpp"
 #include "custom_mpl/search/core/heuristic.hpp"
 #include "custom_mpl/search/datastructures/datastructures.hpp"
 #include "custom_mpl/search/datastructures/open_list.hpp"
@@ -51,8 +52,8 @@ struct LargeGraph {
 
   bool is_free(const Coords &n) const {
     for (const auto &obst : obstacles) {
-      if (n.x > obst.x_l && n.x < obst.x_u) {
-        if (n.y > obst.y_l && n.y < obst.y_u) {
+      if (n.x >= obst.x_l && n.x <= obst.x_u) {
+        if (n.y >= obst.y_l && n.y <= obst.y_u) {
           return false;
         }
       }
@@ -87,7 +88,8 @@ int main() {
   using G = LargeGraph;
 
   G graph;
-  graph.obstacles.push_back({10, 10, 20, 20});
+  graph.obstacles.push_back({10, 5, 15, 15});
+  graph.obstacles.push_back({5, 10, 10, 15});
   graph.obstacles.push_back({60, 50, 80, 80});
 
   Coords goal{99, 99};
@@ -139,4 +141,20 @@ int main() {
   for (auto n : res3.path)
     std::cout << " " << "(" << n.x << "," << n.y << ")";
   std::cout << "\n";
+
+  start_time = std::chrono::steady_clock::now();
+  auto res4 = custom_mpl::search::algorithms::focal_search(
+      graph, Coords{1, 1}, is_goal, euclidean_heuristic, euclidean_heuristic,
+      2);
+  end_time = std::chrono::steady_clock::now();
+  diff_seconds = end_time - start_time;
+  runtime = diff_seconds.count();
+  std::cout << "Focal search found=" << res4.found << " in " << runtime
+            << " seconds. "
+            << " Cost=" << res4.cost << " path:";
+  for (auto n : res4.path)
+    std::cout << " " << "(" << n.x << "," << n.y << ")";
+  std::cout << "\n";
+
+  return 0;
 }
