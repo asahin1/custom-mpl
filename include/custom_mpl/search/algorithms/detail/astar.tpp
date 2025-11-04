@@ -6,6 +6,7 @@
 #include <limits>
 #include <unordered_map>
 
+#include "custom_mpl/search/core/node_store.hpp"
 #include "custom_mpl/search/core/result.hpp"
 #include "custom_mpl/search/core/types.hpp"
 #include "custom_mpl/search/datastructures/open_list.hpp"
@@ -13,39 +14,6 @@
 #include "custom_mpl/search/utils/reconstruct.hpp"
 
 namespace custom_mpl::search::algorithms {
-
-template <class Node> struct NodeStore {
-  using NodeHash = utils::DerefHash<Node>;
-  using NodeEq = utils::DerefEq<Node>;
-
-  static constexpr size_t kNoParent = std::numeric_limits<size_t>::max();
-
-  struct NodeInfo {
-    const Node node;
-    core::Cost g;
-    size_t parent;
-    bool closed;
-  };
-
-  std::deque<NodeInfo> nodes;
-
-  std::unordered_map<const Node *, size_t, NodeHash, NodeEq> node_to_id;
-
-  size_t get_or_create(const Node &n) {
-    Node probe = n;
-    const Node *p = &probe;
-    auto it = node_to_id.find(p);
-    if (it != node_to_id.end()) {
-      return it->second;
-    }
-    NodeInfo &stored =
-        nodes.emplace_back(NodeInfo{n, core::INF, kNoParent, false});
-    const Node *id = &stored.node;
-    size_t index = nodes.size() - 1;
-    node_to_id.emplace(id, index);
-    return index;
-  }
-};
 
 template <class Node, class Graph, class IsGoalFunc, class Heuristic,
           class OrderingPolicy, class ClosedSetPolicy, class ReopenPolicy>
@@ -55,7 +23,7 @@ custom_mpl::search::core::SearchResult<Node> generalized_astar(
     custom_mpl::search::datastructures::OpenList<OrderingPolicy> &open,
     ClosedSetPolicy closed, ReopenPolicy reopen) {
 
-  using NodeStore_t = NodeStore<Node>;
+  using NodeStore_t = core::NodeStore<Node>;
   using NodeInfo = typename NodeStore_t::NodeInfo;
   using NodeContainer_t = std::deque<NodeInfo>;
 
