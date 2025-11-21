@@ -17,7 +17,7 @@ public:
   using CostType = typename OrderingPolicy::CostType;
   using InsertionType = std::uint32_t;
 
-  class Item : public HeapElement {
+  class Item {
   public:
     Item(size_t id, typename OrderingPolicy::Key key, CostType g_at_push)
         : id{id}, key{key}, g_at_push{g_at_push} {}

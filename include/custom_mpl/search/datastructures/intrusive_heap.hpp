@@ -91,9 +91,6 @@ void IntrusiveHeap<ItemType, Compare>::push(ItemType item) {
   }
 }
 
-// template <class ItemType, class Compare>
-// void IntrusiveHeap<ItemType, Compare>::erase(ItemType item) {}
-
 template <class ItemType, class Compare>
 typename std::vector<ItemType>::const_iterator
 IntrusiveHeap<ItemType, Compare>::begin() const {
