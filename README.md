@@ -14,6 +14,12 @@ make install
 
 ---
 
+**To build examples:**
+
+```bash
+make examples
+```
+
 **To test:**
 
 ```bash
