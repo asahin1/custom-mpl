@@ -34,7 +34,7 @@ focal_search(const Graph &graph, const Node &start, const IsGoalFunc &is_goal,
 
   custom_mpl::search::datastructures::OpenList<
       custom_mpl::search::policies::AStarDeeperFirst,
-      custom_mpl::search::datastructures::IntrusiveHeapMaker>
+      custom_mpl::search::datastructures::HeapMaker>
       open;
 
   custom_mpl::search::datastructures::OpenList<

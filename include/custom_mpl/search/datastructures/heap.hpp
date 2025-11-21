@@ -16,6 +16,9 @@ public:
   void pop();
   void push(ItemType item);
 
+  typename std::vector<ItemType>::const_iterator begin() const;
+  typename std::vector<ItemType>::const_iterator end() const;
+
 private:
   std::vector<ItemType> data_;
   Compare compare_;
@@ -66,6 +69,18 @@ void Heap<ItemType, Compare>::push(ItemType item) {
     std::swap(data_[i], data_[parent(i)]);
     i = parent(i);
   }
+}
+
+template <class ItemType, class Compare>
+typename std::vector<ItemType>::const_iterator
+Heap<ItemType, Compare>::begin() const {
+  return data_.begin();
+}
+
+template <class ItemType, class Compare>
+typename std::vector<ItemType>::const_iterator
+Heap<ItemType, Compare>::end() const {
+  return data_.end();
 }
 
 template <class ItemType, class Compare>
