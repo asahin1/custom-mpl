@@ -10,9 +10,12 @@
 
 namespace custom_mpl::search::policies {
 struct ClosedNone {
-  bool is_closed(const bool &flag) const { return false; }
-  void mark_closed(bool &flag) const {}
-  void reopen(bool &flag) const {}
+  bool is_closed(const bool &flag) const {
+    (void)flag;
+    return false;
+  }
+  void mark_closed(bool &flag) const { (void)flag; }
+  void reopen(bool &flag) const { (void)flag; }
   static constexpr bool gates_enqueue = false;
 };
 struct ClosedFlag {

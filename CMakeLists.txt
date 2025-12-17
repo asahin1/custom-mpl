@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(custom_mpl VERSION 1.0.0)
 
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
 # Library target
 add_library(custom_mpl INTERFACE)
 target_include_directories(custom_mpl INTERFACE
@@ -41,16 +45,18 @@ configure_package_config_file(
 
 install(
   FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfigVersion.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/custom_mplConfigVersion.cmake"
   DESTINATION lib/cmake/custom_mpl
 )
 
 option(CUSTOM_MPL_BUILD_EXAMPLES "Build examples" OFF)
 option(CUSTOM_MPL_BUILD_TESTS "Build tests" OFF)
+
 if(CUSTOM_MPL_BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
+
 if(CUSTOM_MPL_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
