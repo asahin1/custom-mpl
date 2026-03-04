@@ -16,10 +16,11 @@
 namespace custom_mpl::search::algorithms {
 
 template <class Node, class Graph, class IsGoalFunc, class Heuristic,
-          class OrderingPolicy, class ClosedSetPolicy, class ReopenPolicy>
+          class PreTerminationFunc, class OrderingPolicy, class ClosedSetPolicy,
+          class ReopenPolicy>
 custom_mpl::search::core::SearchResult<Node> generalized_astar(
     const Graph &graph, const Node &start, const IsGoalFunc &is_goal,
-    const Heuristic &h,
+    const Heuristic &h, const PreTerminationFunc &preterminate_check,
     custom_mpl::search::datastructures::OpenList<OrderingPolicy> &open,
     ClosedSetPolicy closed, ReopenPolicy reopen) {
 
@@ -39,6 +40,9 @@ custom_mpl::search::core::SearchResult<Node> generalized_astar(
   custom_mpl::search::core::SearchResult<Node> res;
 
   while (!open.empty()) {
+    if (preterminate_check()) {
+      break;
+    }
     auto it = open.pop_min();
     NodeInfo &u_info = node_store.nodes[it.id];
     if (it.g_at_push != u_info.g) // popped node is stale

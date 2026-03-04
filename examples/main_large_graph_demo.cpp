@@ -83,6 +83,11 @@ struct LargeGraph {
   }
 };
 
+bool timeout_check(std::chrono::_V2::steady_clock::time_point &start_time,
+                   std::chrono::duration<double> timeout_secs) {
+  return (std::chrono::steady_clock::now() - start_time) > timeout_secs;
+}
+
 int main() {
   using N = Coords;
   using G = LargeGraph;
@@ -100,14 +105,15 @@ int main() {
                 (goal.y - n.y) * (goal.y - n.y));
   };
 
-  std::chrono::_V2::steady_clock::time_point start_time;
-  std::chrono::_V2::steady_clock::time_point end_time;
-  start_time = std::chrono::steady_clock::now();
+  auto start_time = std::chrono::steady_clock::now();
+  auto limit = std::chrono::milliseconds(10);
+  auto timer = [&]() { return timeout_check(start_time, limit); };
+  //   auto always_false = []() { return false; };
   auto [res, _] = custom_mpl::search::algorithms::astar(
-      graph, Coords{1, 1}, is_goal, euclidean_heuristic,
+      graph, Coords{1, 1}, is_goal, euclidean_heuristic, timer,
       custom_mpl::search::policies::ClosedNone{},
       custom_mpl::search::policies::ReopenForbid{});
-  end_time = std::chrono::steady_clock::now();
+  auto end_time = std::chrono::steady_clock::now();
   std::chrono::duration<double> diff_seconds = end_time - start_time;
   double runtime = diff_seconds.count();
   std::cout << "A* found=" << res.found << " in " << runtime << " seconds. "

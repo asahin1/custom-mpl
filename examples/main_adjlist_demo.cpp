@@ -60,8 +60,10 @@ int main() {
 
   // A* with closed set and without node reopening: Has to result in suboptimal
   // path if the heuristic is inconsistent.
+  auto always_false = []() { return false; };
   auto [res3, open3] = custom_mpl::search::algorithms::astar<N>(
-      g, 0, is_goal, heuristic, custom_mpl::search::policies::ClosedFlag{},
+      g, 0, is_goal, heuristic, always_false,
+      custom_mpl::search::policies::ClosedFlag{},
       custom_mpl::search::policies::ReopenForbid{});
   std::cout << "A* (classic without reopening) found=" << res3.found
             << " cost=" << res3.cost << " path:";

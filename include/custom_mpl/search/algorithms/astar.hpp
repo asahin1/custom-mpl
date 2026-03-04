@@ -11,10 +11,11 @@ namespace custom_mpl::search::algorithms {
 
 // Generalized astar to derive from
 template <class Node, class Graph, class IsGoalFunc, class Heuristic,
-          class OrderingPolicy, class ClosedSetPolicy, class ReopenPolicy>
+          class PreTerminationFunc, class OrderingPolicy, class ClosedSetPolicy,
+          class ReopenPolicy>
 custom_mpl::search::core::SearchResult<Node> generalized_astar(
     const Graph &graph, const Node &start, const IsGoalFunc &is_goal,
-    const Heuristic &h,
+    const Heuristic &h, const PreTerminationFunc &preterminate_check,
     custom_mpl::search::datastructures::OpenList<OrderingPolicy> &open,
     ClosedSetPolicy closed, ReopenPolicy reopen);
 } // namespace custom_mpl::search::algorithms
@@ -25,28 +26,31 @@ namespace custom_mpl::search::algorithms {
 
 // Regular astar (weight = 1) with deeper first tie-break
 template <class Node, class Graph, class IsGoalFunc, class Heuristic,
-          class ClosedSetPolicy, class ReopenPolicy>
+          class PreTerminationFunc, class ClosedSetPolicy, class ReopenPolicy>
 custom_mpl::search::core::SearchResult<Node>
 astar(const Graph &graph, const Node &start, const IsGoalFunc &is_goal,
-      const Heuristic &h,
+      const Heuristic &h, const PreTerminationFunc &preterminate_check,
       custom_mpl::search::datastructures::OpenList<
           custom_mpl::search::policies::AStarDeeperFirst> &open,
       ClosedSetPolicy closed, ReopenPolicy reopen) {
-  return generalized_astar(graph, start, is_goal, h, open, closed, reopen);
+  return generalized_astar(graph, start, is_goal, h, preterminate_check, open,
+                           closed, reopen);
 }
 
 // Convenience overload for returning Open List
 template <class Node, class Graph, class IsGoalFunc, class Heuristic,
-          class ClosedSetPolicy, class ReopenPolicy>
+          class PreTerminationFunc, class ClosedSetPolicy, class ReopenPolicy>
 std::pair<custom_mpl::search::core::SearchResult<Node>,
           custom_mpl::search::datastructures::OpenList<
               custom_mpl::search::policies::AStarDeeperFirst>>
 astar(const Graph &graph, const Node &start, const IsGoalFunc &is_goal,
-      const Heuristic &h, ClosedSetPolicy closed, ReopenPolicy reopen) {
+      const Heuristic &h, const PreTerminationFunc &preterminate_check,
+      ClosedSetPolicy closed, ReopenPolicy reopen) {
   custom_mpl::search::datastructures::OpenList<
       custom_mpl::search::policies::AStarDeeperFirst>
       open;
-  auto result = astar(graph, start, is_goal, h, open, closed, reopen);
+  auto result =
+      astar(graph, start, is_goal, h, preterminate_check, open, closed, reopen);
   return {std::move(result), std::move(open)};
 }
 
@@ -59,7 +63,8 @@ auto astar_classic(
   custom_mpl::search::datastructures::OpenList<
       custom_mpl::search::policies::AStarDeeperFirst>
       open;
-  return astar(graph, start, is_goal, h, open,
+  auto always_false = []() { return false; };
+  return astar(graph, start, is_goal, h, always_false, open,
                custom_mpl::search::policies::ClosedFlag{}, // with closed list
                custom_mpl::search::policies::ReopenIfBetter{} // and reopening
   );
@@ -72,8 +77,10 @@ weighted_astar(const Graph &graph, const Node &start, const IsGoalFunc &is_goal,
                const Heuristic &h, double weight) {
   custom_mpl::search::datastructures::OpenList open{
       custom_mpl::search::policies::WeightedAStarLowerHFirst{weight}};
+
+  auto always_false = []() { return false; };
   return generalized_astar(
-      graph, start, is_goal, h, open,
+      graph, start, is_goal, h, always_false, open,
       custom_mpl::search::policies::ClosedFlag{},    // with closed list
       custom_mpl::search::policies::ReopenIfBetter{} // and reopening
   );
